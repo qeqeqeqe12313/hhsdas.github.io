@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NightEsport</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  /* Общие стили */
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #f0f0f0;
+    line-height: 1.6;
+  }
+
+  /* Хедер */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 999;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #fff;
+    margin: 0;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  nav a {
+    color:#fff;
+    text-decoration:none;
+    font-weight:600;
+    padding:8px 16px;
+    border-radius:8px;
+    transition:.3s all ease;
+  }
+
+  nav a:hover {
+    background-color: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+  }
+
+  /* Основной контент */
+  main {
+    padding:30px calc(10% + 20px);
+    max-width:1200px;
+    margin:auto;
+  }
+
+  /* Заголовки */
+  h2 {
+    font-size:2rem; 
+    margin-bottom:20px; 
+    position: relative;
+  }
+
+  h2::after {
+    content:"";
+    display:block; 
+    width:50px; 
+    height:3px; 
+    background:#ff4b2b; 
+    margin-top:-10px; 
+    margin-left:auto; 
+    margin-right:auto; 
+    border-radius:2px;
+  }
+  
+  /* Разделы */
+  .content-section {
+    display: none;
+  }
+
+  .content-section.active {
+    display: block;
+  }
+
+  /* Таблицы */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+
+  th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  th {
+    background-color: rgba(0,0,0,0.2);
+    font-weight: 600;
+  }
+
+  tr:hover {
+    background-color: rgba(255,255,255,0.05);
+  }
+
+  /* Кнопки */
+  button, .btn {
+    background-color:#ff4b2b;
+    color:#fff;
+    border:none;
+    padding:10px 20px;
+    cursor:pointer;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:bold;
+    transition:.3s all ease-in-out;
+    margin: 5px;
+  }
+
+  button:hover, .btn:hover {
+    background-color:#ff416c;
+    transform:scale(1.05);
+  }
+
+  .delete-btn {
+    background-color: #ff3b3b;
+  }
+
+  .delete-btn:hover {
+    background-color: #ff1a1a;
+  }
+
+  /* Карточки */
+  .card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* Изображения */
+  .team-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-right: 15px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .news-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+
+  .player-avatar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+
+  /* Админ панель */
+  .admin-panel {
+    display:none;
+    margin-top:30px;
+    padding:20px;
+    border-radius:12px;
+    background:linear-gradient(to right,#232526,#414345);
+    box-shadow:0 .5rem .75rem rgba(0,0,0,.3);
+    max-width:600px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  /* Формы */
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="file"],
+  input[type="password"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px;
+    background-color: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  input[type="file"] {
+    padding: 8px;
+  }
+
+  /* Составы команд */
+  .team-roster {
+    display: none;
+  }
+
+  .team-roster.active {
+    display: block;
+  }
+
+  .player-card {
+    background: rgba(255,255,255,0.05);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Превью изображений */
+  .image-preview {
+    max-width: 200px;
+    max-height: 200px;
+    margin: 10px 0;
+    border-radius: 8px;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+<h1>NightEsport</h1>
+<nav>
+<a href="#" data-tab="main">Главная</a>
+<a href="#" data-tab="news">Новости</a>
+<a href="#" data-tab="tournaments">Турниры</a>
+<a href="#" data-tab="teams">Команды</a>
+<a href="#" data-tab="rosters">Составы</a>
+<button class="admin-toggle-btn" id="adminBtn">Админ-панель</button>
+</nav>
+</header>
+
+<main>
+
+<!-- Главная страница -->
+<section id="main" class="content-section active">
+<div class="main-content">
+  <h2>Добро пожаловать в NightEsports!</h2>
+  <p>Лучший источник информации о киберспортивных событиях.</p>
+  <div class="card">
+    <h3>О нас</h3>
+    <p>NightEsport - это платформа для отслеживания киберспортивных событий, новостей и статистики команд.</p>
+  </div>
+</div>
+</section>
+
+<!-- Новости -->
+<section id="news" class="content-section">
+<h2>Последние новости</h2>
+<div id='newsContainer'></div>
+</section>
+
+<!-- Турниры -->
+<section id='tournaments' class='content-section'>
+<h2>Турниры</h2>
+<ul id='tournamentsList'></ul>
+
+<div class="card">
+  <h3>Добавить турнир</h3>
+  <form id='addTournamentForm'>
+    <div class="form-group">
+      <input type='text' id='tournamentName' placeholder='Название турнира' required />
+    </div>
+    <div class="form-group">
+      <input type='date' id='tournamentDate' required />
+    </div>
+    <button type='submit'>Добавить турнир</button>
+  </form>
+</div>
+</section>
+
+<!-- Команды -->
+<section id="teams" class="content-section">
+<h2>Топ команд</h2>
+<table id="teamsTable">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Лого</th>
+      <th>Название команды</th>
+      <th>Рейтинг</th>
+      <th>Действия</th>
+    </tr>
+  </thead>
+  <tbody id="teamsBody"></tbody>
+</table>
+</section>
+
+<!-- Составы команд -->
+<section id="rosters" class="content-section">
+<h2>Составы команд</h2>
+<div id="teamsListForRosters"></div>
+
+<div id="rosterDetails" style="display: none;">
+  <h3 id="rosterTeamName"></h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Аватар</th>
+        <th>Ник</th>
+        <th>Роль</th>
+        <th>Действия</th>
+      </tr>
+    </thead>
+    <tbody id="rosterPlayers"></tbody>
+  </table>
+  <button id="backToTeams">Назад к списку команд</button>
+</div>
+</section>
+
+<!-- Админ панель -->
+<div class='admin-panel' id='adminPanel'>
+<div class="card">
+  <h3>Сменить пароль админ-панели</h3>
+  <form id='changePasswordForm'>
+    <div class="form-group">
+      <input type='password' id='currentPassword' placeholder='Текущий пароль' required />
+    </div>
+    <div class="form-group">
+      <input type='password' id='newPassword' placeholder='Новый пароль' required />
+    </div>
+    <div class="form-group">
+      <input type='password' id='confirmNewPassword' placeholder='Подтвердите новый пароль' required />
+    </div>
+    <button type='submit'>Сменить пароль</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>Добавить команду</h3>
+  <form id='addTeamForm' class='admin-form'>
+    <div class="form-group">
+      <input type='text' id='teamName' placeholder='Название команды' required />
+    </div>
+    <div class="form-group">
+      <input type='number' id='teamRating' placeholder='Рейтинг' required min='0'/>
+    </div>
+    <div class="form-group">
+      <label for="teamLogo">Логотип команды:</label>
+      <input type='file' id='teamLogo' accept="image/*" />
+      <img id="teamLogoPreview" class="image-preview" />
+    </div>
+    <button type='submit'>Добавить команду</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>Добавить новость</h3>
+  <form id='addNewsForm'>
+    <div class="form-group">
+      <input type='text' id='newsTitle' placeholder='Заголовок новости' required />
+    </div>
+    <div class="form-group">
+      <label for="newsImage">Изображение для новости:</label>
+      <input type='file' id='newsImage' accept="image/*" />
+      <img id="newsImagePreview" class="image-preview" />
+    </div>
+    <div class="form-group">
+      <textarea id='newsContent' placeholder='Содержание новости' required rows="5"></textarea>
+    </div>
+    <button type='submit'>Добавить новость</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>Добавить игрока в состав</h3>
+  <form id='addPlayerForm'>
+    <div class="form-group">
+      <select id="playerTeamSelect" required>
+        <option value="">Выберите команду</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <input type='text' id='playerNickname' placeholder='Ник игрока' required />
+    </div>
+    <div class="form-group">
+      <input type='text' id='playerRole' placeholder='Роль' required />
+    </div>
+    <div class="form-group">
+      <label for="playerAvatar">Аватар игрока:</label>
+      <input type='file' id='playerAvatar' accept="image/*" />
+      <img id="playerAvatarPreview" class="image-preview" />
+    </div>
+    <button type='submit'>Добавить игрока</button>
+  </form>
+</div>
+</div>
+
+<div style='display:none;' id='hiddenAdminPassword'>secret1234</div>
+
+<script>
+// Изначальные данные
+let tournaments = JSON.parse(localStorage.getItem('tournaments')) || [];
+let newsItems = JSON.parse(localStorage.getItem('newsItems')) || [];
+let teams = JSON.parse(localStorage.getItem('teams')) || [
+  {id: 1, name:'Vitality', rating:100, logo: 'https://img.icons8.com/color/96/000000/team.png'},
+  {id: 2, name:'Team Spirit', rating:98, logo: 'https://img.icons8.com/color/96/000000/team.png'},
+  {id: 3, name:'Falcons', rating:95, logo: 'https://img.icons8.com/color/96/000000/team.png'}
+];
+
+let players = JSON.parse(localStorage.getItem('players')) || [
+  {id: 1, teamId: 1, nickname: 'ZywOo', role: 'Sniper', avatar: 'https://img.icons8.com/color/96/000000/user.png'},
+  {id: 2, teamId: 1, nickname: 'apEX', role: 'IGL', avatar: 'https://img.icons8.com/color/96/000000/user.png'},
+  {id: 3, teamId: 2, nickname: 'Yatoro', role: 'Carry', avatar: 'https://img.icons8.com/color/96/000000/user.png'},
+  {id: 4, teamId: 2, nickname: 'Mira', role: 'Support', avatar: 'https://img.icons8.com/color/96/000000/user.png'}
+];
+
+// Генератор ID
+function generateId() {
+  return '_' + Math.random().toString(36).substr(2, 9);
+}
+
+// Функция для переключения вкладок
+function showTab(tabId) {
+  const sections = document.querySelectorAll('.content-section');
+  sections.forEach(s => s.classList.remove('active'));
+  
+  const activeSection = document.getElementById(tabId);
+  if (activeSection) activeSection.classList.add('active');
+
+  // Особые обработчики для вкладок
+  if (tabId === 'rosters') {
+    renderTeamsForRosters();
+    document.getElementById('rosterDetails').style.display = 'none';
+    document.getElementById('teamsListForRosters').style.display = 'block';
+  }
+}
+
+// Обработчики для вкладок
+document.querySelectorAll('nav a[data-tab]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const tabId = link.getAttribute('data-tab');
+    showTab(tabId);
+  });
+});
+
+// Изначально скрытая панель
+let isAdminPanelVisible = false;
+const adminFormsContainer = document.getElementById('adminPanel');
+
+document.getElementById('adminBtn').addEventListener('click', () => {
+  if (!isAdminPanelVisible) {
+    const password = prompt("Введите пароль для доступа к админ-панели:");
+    if (password === document.getElementById('hiddenAdminPassword').textContent) {
+      adminFormsContainer.style.display = 'block';
+      isAdminPanelVisible = true;
+      // Перерисовываем новости, чтобы показать кнопки удаления
+      renderNews();
+      // Перерисовываем турниры, чтобы показать кнопки удаления
+      renderTournaments();
+      // Перерисовываем составы, если открыта вкладка
+      if (document.getElementById('rosters').classList.contains('active')) {
+        const rosterDetails = document.getElementById('rosterDetails');
+        if (rosterDetails.style.display !== 'none') {
+          renderRosterPlayers(rosterDetails.dataset.teamId);
+        }
+      }
+    } else {
+      alert("Неверный пароль");
+    }
+  } else {
+    adminFormsContainer.style.display = 'none';
+    isAdminPanelVisible = false;
+    // Перерисовываем новости, чтобы скрыть кнопки удаления
+    renderNews();
+    // Перерисовываем турниры, чтобы скрыть кнопки удаления
+    renderTournaments();
+    // Перерисовываем составы, если открыта вкладка
+    if (document.getElementById('rosters').classList.contains('active')) {
+      const rosterDetails = document.getElementById('rosterDetails');
+      if (rosterDetails.style.display !== 'none') {
+        renderRosterPlayers(rosterDetails.dataset.teamId);
+      }
+    }
+  }
+});
+
+// Смена пароля админ-панели
+document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const currentPassword = document.getElementById('currentPassword').value;
+  const newPassword = document.getElementById('newPassword').value;
+  const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+  
+  const storedPassword = document.getElementById('hiddenAdminPassword').textContent;
+  
+  if (currentPassword !== storedPassword) {
+    alert("Текущий пароль введен неверно");
+    return;
+  }
+  
+  if (newPassword !== confirmNewPassword) {
+    alert("Новые пароли не совпадают");
+    return;
+  }
+  
+  if (newPassword.length < 4) {
+    alert("Пароль должен содержать минимум 4 символа");
+    return;
+  }
+  
+  document.getElementById('hiddenAdminPassword').textContent = newPassword;
+  this.reset();
+  alert("Пароль успешно изменен");
+});
+
+// Превью изображений
+document.getElementById('teamLogo').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('teamLogoPreview').src = e.target.result;
+      document.getElementById('teamLogoPreview').style.display = 'block';
+    }
+    reader.readAsDataURL(file);
+  }
+});
+
+document.getElementById('newsImage').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('newsImagePreview').src = e.target.result;
+      document.getElementById('newsImagePreview').style.display = 'block';
+    }
+    reader.readAsDataURL(file);
+  }
+});
+
+document.getElementById('playerAvatar').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('playerAvatarPreview').src = e.target.result;
+      document.getElementById('playerAvatarPreview').style.display = 'block';
+    }
+    reader.readAsDataURL(file);
+  }
+});
+
+// Добавление команды
+document.getElementById('addTeamForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const name = document.getElementById('teamName').value.trim();
+  const rating = parseInt(document.getElementById('teamRating').value);
+  const logoInput = document.getElementById('teamLogo');
+  let logo = 'https://img.icons8.com/color/96/000000/team.png'; // дефолтное изображение
+  
+  if (!name || isNaN(rating)) return;
+
+  // Если загружено изображение
+  if (logoInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      logo = e.target.result;
+      teams.push({id: generateId(), name, rating, logo});
+      saveTeams();
+      renderTeams();
+      updateTeamSelect();
+      document.getElementById('addTeamForm').reset();
+      document.getElementById('teamLogoPreview').style.display = 'none';
+      alert("Команда добавлена");
+    }
+    reader.readAsDataURL(logoInput.files[0]);
+  } else {
+    teams.push({id: generateId(), name, rating, logo});
+    saveTeams();
+    renderTeams();
+    updateTeamSelect();
+    this.reset();
+    alert("Команда добавлена");
+  }
+});
+
+// Рендер команд
+function renderTeams() {
+  const tbody = document.getElementById('teamsBody');
+  tbody.innerHTML = '';
+  teams.sort((a,b) => b.rating - a.rating).forEach((team, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML=`
+      <td>${index+1}</td>
+      <td><img src="${team.logo}" class="team-logo" alt="${team.name}" /></td>
+      <td>${team.name}</td>
+      <td>${team.rating}</td>
+      <td><button class="delete-btn" data-id="${team.id}">Удалить</button></td>`;
+    
+    row.querySelector('.delete-btn').addEventListener('click', (e) => {
+      if(confirm(`Удалить команду ${team.name}?`)) {
+        teams = teams.filter(t => t.id !== team.id);
+        // Удаляем игроков этой команды
+        players = players.filter(p => p.teamId !== team.id);
+        savePlayers();
+        saveTeams();
+        renderTeams();
+        updateTeamSelect();
+      }
+    });
+    
+    tbody.appendChild(row);
+  });
+}
+
+// Сохранение команд
+function saveTeams() {
+  localStorage.setItem('teams', JSON.stringify(teams));
+}
+
+// Добавление новости
+document.getElementById('addNewsForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const title = document.getElementById('newsTitle').value.trim();
+  const content = document.getElementById('newsContent').value.trim();
+  const imageInput = document.getElementById('newsImage');
+  let image = null;
+  
+  if (!title || !content) return;
+
+  // Если загружено изображение
+  if (imageInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      image = e.target.result;
+      newsItems.push({
+        id: generateId(), 
+        title, 
+        content, 
+        date: new Date().toLocaleDateString(),
+        image
+      });
+      saveNews();
+      renderNews();
+      document.getElementById('addNewsForm').reset();
+      document.getElementById('newsImagePreview').style.display = 'none';
+      alert("Новость добавлена");
+    }
+    reader.readAsDataURL(imageInput.files[0]);
+  } else {
+    newsItems.push({
+      id: generateId(), 
+      title, 
+      content, 
+      date: new Date().toLocaleDateString(),
+      image: null
+    });
+    saveNews();
+    renderNews();
+    this.reset();
+    alert("Новость добавлена");
+  }
+});
+
+// Рендер новостей
+function renderNews() {
+  const container = document.getElementById('newsContainer');
+  container.innerHTML='';
+  
+  if(newsItems.length === 0) {
+    container.innerHTML = '<p>Новостей пока нет</p>';
+    return;
+  }
+
+  newsItems.forEach((news, index) => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    let imageHTML = '';
+    if (news.image) {
+      imageHTML = `<img src="${news.image}" class="news-image" alt="${news.title}" />`;
+    }
+    div.innerHTML = `
+      <h3>${news.title}</h3>
+      <p>${news.date}</p>
+      ${imageHTML}
+      <p>${news.content}</p>
+      ${isAdminPanelVisible ? `<button class="delete-btn" data-id="${news.id}">Удалить новость</button>` : ''}
+    `;
+    
+    if(isAdminPanelVisible) {
+      div.querySelector('.delete-btn').addEventListener('click', () => {
+        if(confirm(`Удалить новость "${news.title}"?`)) {
+          newsItems = newsItems.filter(n => n.id !== news.id);
+          saveNews();
+          renderNews();
+        }
+      });
+    }
+    
+    container.appendChild(div);
+  });
+}
+
+// Сохранение новостей
+function saveNews() {
+  localStorage.setItem('newsItems', JSON.stringify(newsItems));
+}
+
+// Добавление турнира
+document.getElementById('addTournamentForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const name = document.getElementById('tournamentName').value.trim();
+  const date = document.getElementById('tournamentDate').value;
+
+  if(!name || !date) return;
+
+  tournaments.push({id: generateId(), name, date});
+  saveTournaments();
+  renderTournaments();
+  this.reset();
+});
+
+// Рендер турниров
+function renderTournaments() {
+  const list = document.getElementById('tournamentsList');
+  list.innerHTML='';
+  
+  if(tournaments.length === 0) {
+    list.innerHTML = '<li>Нет запланированных турниров</li>';
+    return;
+  }
+
+  tournaments.forEach((t, i) => {
+    const li = document.createElement('li');
+    li.className = 'card';
+    li.innerHTML = `
+      <h4>${t.name}</h4>
+      <p>Дата: ${new Date(t.date).toLocaleDateString()}</p>
+      ${isAdminPanelVisible ? `<button class="delete-btn" data-id="${t.id}">Удалить турнир</button>` : ''}
+    `;
+    
+    if(isAdminPanelVisible) {
+      li.querySelector('.delete-btn').addEventListener('click', () => {
+        if(confirm(`Удалить турнир "${t.name}"?`)) {
+          tournaments = tournaments.filter(tour => tour.id !== t.id);
+          saveTournaments();
+          renderTournaments();
+        }
+      });
+    }
+    
+    list.appendChild(li);
+  });
+}
+
+// Сохранение турниров
+function saveTournaments() {
+  localStorage.setItem('tournaments', JSON.stringify(tournaments));
+}
+
+// Обновление выбора команд для добавления игроков
+function updateTeamSelect() {
+  const select = document.getElementById('playerTeamSelect');
+  select.innerHTML = '<option value="">Выберите команду</option>';
+  
+  teams.forEach(team => {
+    const option = document.createElement('option');
+    option.value = team.id;
+    option.textContent = team.name;
+    select.appendChild(option);
+  });
+}
+
+// Добавление игрока
+document.getElementById('addPlayerForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const teamId = document.getElementById('playerTeamSelect').value;
+  const nickname = document.getElementById('playerNickname').value.trim();
+  const role = document.getElementById('playerRole').value.trim();
+  const avatarInput = document.getElementById('playerAvatar');
+  let avatar = 'https://img.icons8.com/color/96/000000/user.png'; // дефолтное изображение
+  
+  if(!teamId || !nickname || !role) return;
+
+  // Если загружено изображение
+  if (avatarInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      avatar = e.target.result;
+      players.push({
+        id: generateId(),
+        teamId,
+        nickname,
+        role,
+        avatar
+      });
+      
+      savePlayers();
+      
+      // Обновляем отображение, если открыт состав этой команды
+      const rosterDetails = document.getElementById('rosterDetails');
+      if(rosterDetails.style.display !== 'none' && rosterDetails.dataset.teamId === teamId) {
+        renderRosterPlayers(teamId);
+      }
+      
+      document.getElementById('addPlayerForm').reset();
+      document.getElementById('playerAvatarPreview').style.display = 'none';
+      alert("Игрок добавлен");
+    }
+    reader.readAsDataURL(avatarInput.files[0]);
+  } else {
+    players.push({
+      id: generateId(),
+      teamId,
+      nickname,
+      role,
+      avatar
+    });
+    
+    savePlayers();
+    
+    // Обновляем отображение, если открыт состав этой команды
+    const rosterDetails = document.getElementById('rosterDetails');
+    if(rosterDetails.style.display !== 'none' && rosterDetails.dataset.teamId === teamId) {
+      renderRosterPlayers(teamId);
+    }
+    
+    this.reset();
+    alert("Игрок добавлен");
+  }
+});
+
+// Сохранение игроков
+function savePlayers() {
+  localStorage.setItem('players', JSON.stringify(players));
+}
+
+// Рендер списка команд для выбора состава
+function renderTeamsForRosters() {
+  const container = document.getElementById('teamsListForRosters');
+  container.innerHTML = '';
+  
+  if(teams.length === 0) {
+    container.innerHTML = '<p>Команд пока нет</p>';
+    return;
+  }
+
+  teams.forEach((team, index) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div style="display: flex; align-items: center;">
+        <img src="${team.logo}" class="team-logo" alt="${team.name}" />
+        <div>
+          <h3>${team.name}</h3>
+          <p>Рейтинг: ${team.rating}</p>
+        </div>
+      </div>
+      <button class="show-roster-btn" data-team-id="${team.id}">Показать состав</button>
+    `;
+    
+    card.querySelector('.show-roster-btn').addEventListener('click', (e) => {
+      const teamId = e.target.getAttribute('data-team-id');
+      showTeamRoster(teamId);
+    });
+    
+    container.appendChild(card);
+  });
+}
+
+// Показать состав конкретной команды
+function showTeamRoster(teamId) {
+  const team = teams.find(t => t.id === teamId);
+  if(!team) return;
+
+  document.getElementById('teamsListForRosters').style.display = 'none';
+  const rosterDetails = document.getElementById('rosterDetails');
+  rosterDetails.style.display = 'block';
+  rosterDetails.dataset.teamId = teamId;
+  
+  document.getElementById('rosterTeamName').textContent = `Состав команды ${team.name}`;
+  renderRosterPlayers(teamId);
+}
+
+// Рендер игроков в составе команды
+function renderRosterPlayers(teamId) {
+  const tbody = document.getElementById('rosterPlayers');
+  tbody.innerHTML = '';
+  
+  const teamPlayers = players.filter(p => p.teamId === teamId);
+  
+  if(teamPlayers.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4">В составе нет игроков</td></tr>';
+    return;
+  }
+  
+  teamPlayers.forEach((player, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><img src="${player.avatar}" class="player-avatar" alt="${player.nickname}" /></td>
+      <td>${player.nickname}</td>
+      <td>${player.role}</td>
+      <td>
+        ${isAdminPanelVisible ? `<button class="delete-btn" data-id="${player.id}">Удалить</button>` : ''}
+      </td>
+    `;
+    
+    if(isAdminPanelVisible) {
+      row.querySelector('.delete-btn').addEventListener('click', () => {
+        if(confirm(`Удалить игрока ${player.nickname}?`)) {
+          players = players.filter(p => p.id !== player.id);
+          savePlayers();
+          renderRosterPlayers(teamId);
+        }
+      });
+    }
+    
+    tbody.appendChild(row);
+  });
+}
+
+// Кнопка "Назад" для составов
+document.getElementById('backToTeams').addEventListener('click', () => {
+  document.getElementById('rosterDetails').style.display = 'none';
+  document.getElementById('teamsListForRosters').style.display = 'block';
+});
+
+// Инициализация при загрузке страницы
+window.addEventListener('load', () => {
+  // Рендер всех данных
+  renderTeams();
+  renderNews();
+  renderTournaments();
+  updateTeamSelect();
+  renderTeamsForRosters();
+
+  // Показать активную вкладку
+  const hash = window.location.hash.substring(1);
+  const validTabs = ['main', 'news', 'tournaments', 'teams', 'rosters'];
+  const defaultTab = validTabs.includes(hash) ? hash : 'main';
+  showTab(defaultTab);
+});
+</script>
+
+</body>
+</html>
